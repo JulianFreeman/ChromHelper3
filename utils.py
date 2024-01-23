@@ -1,5 +1,6 @@
 # coding: utf8
 import os
+import sys
 import json
 from pathlib import Path
 from dataclasses import dataclass, field
@@ -24,6 +25,17 @@ def get_with_chained_keys(dic: dict, keys: list, default=None):
     return get_with_chained_keys(dic[k], keys[1:])
 
 
+PLAT = sys.platform
+USER_PATH = os.path.expanduser("~")
+
+USER_DATA_PATH_MAP = {
+    "win32": Path(USER_PATH, r"AppData\Local\Google\Chrome\User Data"),
+    "darwin": Path(USER_PATH, r"Library/Application Support/Google/Chrome")
+}
+
+USER_DATA_PATH = USER_DATA_PATH_MAP[PLAT]
+
+
 @dataclass
 class ProfileNode(object):
     gaia_given_name: str
@@ -34,8 +46,6 @@ class ProfileNode(object):
 
 
 ProfilesData = dict[str, ProfileNode]
-
-USER_DATA_PATH = Path(r"C:\Users\Julian\AppData\Local\Google\Chrome\User Data")
 
 
 def scan_profiles() -> ProfilesData:
